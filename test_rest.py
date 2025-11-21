@@ -19,9 +19,9 @@ Alerts in the timecardVerifications dataset can include an approaching overtime 
 Employee Dashboard - https://insperity.myisolved.com/rest/api/clients/{clientId}/legals/{legalId}/dashboard/filterOptions
 
 TODO:
-    - get client and legal ids for other calls
     - implement request of refresh token
     - handle paginated results
+    - test calling links from legal_links
     - move constants to another file
     - safety: check return statuses and do error checking!
 """
@@ -139,15 +139,70 @@ def get_client_info(access_token: str) -> dict:
     return response_dict['results']
 
 
+def get_client_id(access_token: str) -> str:
+    headers = {}
+    headers['Authorization'] = f"Bearer {access_token}"
+    headers['essScope'] = "Employee"  # ?essScope={Employee|Manager|Supervisor|All*}
+
+    # test getting client information
+    response = requests.get(CLIENTS, headers=headers)
+    response_dict = json.loads(response.content)
+    return response_dict['results'][0]['id']
+
+
+def get_legals(access_token: str) -> dict:
+    headers = {}
+    headers['Authorization'] = f"Bearer {access_token}"
+    headers['essScope'] = "Employee"  # ?essScope={Employee|Manager|Supervisor|All*}
+
+    # test getting client information
+    response = requests.get(LEGALS, headers=headers)
+    response_dict = json.loads(response.content)
+    return response_dict['results']
+
+
+def get_client_and_legal_ids(access_token: str) -> tuple[str, dict]:
+    headers = {}
+    headers['Authorization'] = f"Bearer {access_token}"
+    headers['essScope'] = "Employee"  # ?essScope={Employee|Manager|Supervisor|All*}
+
+    # test getting client information
+    response = requests.get(CLIENTS, headers=headers)
+    response_dict = json.loads(response.content)
+    client_id = response_dict['results'][0]['id']
+
+    response = requests.get(LEGALS, headers=headers)
+    response_dict = json.loads(response.content)
+    # legal_id = response_dict['results'][0]['id']
+    legal_ids = response_dict['results']
+    return client_id, legal_ids
+
+def get_legal_id(legal_ids: dict, legal_name_substring: str) -> tuple[str, dict]:
+    # return the first legal id that matches the name substring
+    for legal_id in legal_ids:
+        if legal_name_substring in legal_id['legalName']:
+            return legal_id['id'], legal_id['links']
+
+    return None
+
+
 if __name__ == '__main__':
     load_dotenv()
     access_token = get_client_credential_token()
 
     # test using the token
-    results = get_client_info(access_token)
-    print(f"{results[0]['clientCode']=}: {results[0]['clientName']=}")
+    # results = get_client_info(access_token)
+    # print(f"{results[0]['clientCode']=}: {results[0]['clientName']=}")
 
+    # client_id = get_client_id(access_token)
+    # print(f"{client_id=}")
 
+    # legal_ids = get_legals(access_token)
+    # print(f"{legal_ids=}")
+
+    client_id, legal_ids = get_client_and_legal_ids(access_token)
+    legal_id, legal_links = get_legal_id(legal_ids, 'Newport')
+    print(f"{client_id=} {legal_id=}, {legal_links=}")
 
 
 
