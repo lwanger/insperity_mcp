@@ -33,162 +33,16 @@ import os
 from dotenv import load_dotenv
 import requests
 
+from insperity_rest_api import *
+
 LEGAL_ID_VES = '2502007-1'
 LEGAL_ID_NPT = '2502007-2'
 LEGAL_ID_LV = '2502007-3'
 
-BASE_URL = "https://insperity.myisolved.com/rest/api"
-GET_TOKEN = f"{BASE_URL}/token"  # POST
-CLIENTS = f"{BASE_URL}/clients"  # "https://insperity.myisolved.com/rest/api/clients"
-LEGALS = f"{BASE_URL}/legals"  # "https://insperity.myisolved.com/rest/api/legals"
-EMPLOYEE = "" # https://insperity.myisolved.com/rest/api/clients/{clientId}/legals/{legalId}/employeesMinimal
-
-
-def to_mime_base64(input_string: str) -> str:
-    """
-    Convert a string to RFC2045-MIME variant of Base64.
-    """
-    byte_data = input_string.encode("utf-8")
-    mime_encoded = base64.b64encode(byte_data)
-    return mime_encoded.decode("utf-8")
-
-
-def get_combined_key() -> str:
-    return to_mime_base64(f"{os.getenv('INSPERITY_CLIENT_ID')}:{os.getenv('INSPERITY_SECRET')}")
-
-
-def get_client_password_token() -> str:
-    """
-    This function is NOT working! MFA is not working.... URL can't be found
-    """
-    # get access token
-    combined_key = get_combined_key()
-
-    headers = {
-        "Authorization": f"Basic {combined_key}",
-        "Content-Type": "application/x-www-form-urlencoded"
-    }
-
-    payload = {
-        "grant_type": "password",
-        "username": os.getenv('INSPERITY_USER'),
-        "password": os.getenv('INSPERITY_PWD'),
-        "clientCode": LEGAL_ID_VES,
-    }
-
-    response = requests.post(GET_TOKEN, headers=headers, data=payload)
-
-    # should be 403 (needs MFA) -- reason="mfa_required"
-    response_dict = json.loads(response.content)
-    mfa_token = response_dict['mfaToken']
-    payload['mfa_token'] = mfa_token
-
-    # get auth code from SMS
-    route_type = "mfaSMSRoute"
-    # route_type = "mfaEmailRoute"
-
-    idx = response_dict[route_type].find('?')
-    queries = response_dict[route_type][idx+1:].split('&')
-
-    headers = {}
-    for query in queries:
-        if len(query) > 0:
-            key, value = query.split('=')
-            headers[key] = value
-
-    response = requests.post(url=response_dict[route_type][:idx], headers=headers)
-    print(f"{route_type=} {response.status_code=}: {response.text=}")
-
-    mfa_auth_code = input("Enter MFA code: ")
-    payload['mfa_code'] = mfa_auth_code
-
-    response = requests.post(GET_TOKEN, headers=headers, data=payload)
-
-    print(f"{route_type=} {response.status_code=}: {response.text=}")
-    return response_dict['access_token']
-
-
-def get_client_credential_token() -> str:
-    # get access token using client_credentials
-    combined_key = get_combined_key()
-
-    headers = {
-        "Authorization": f"Basic {combined_key}",
-        "Content-Type": "application/x-www-form-urlencoded"
-    }
-
-    payload = {
-        "grant_type": "client_credentials",
-        "clientCode": LEGAL_ID_VES,
-    }
-
-    response = requests.post(GET_TOKEN, headers=headers, data=payload)
-    response_dict = json.loads(response.content)
-    # print(f"{response.status_code=}: {response.text=}")
-    return response_dict['access_token']
-
-
-def get_client_info(access_token: str) -> dict:
-    headers = {}
-    headers['Authorization'] = f"Bearer {access_token}"
-    headers['essScope'] = "Employee"  # ?essScope={Employee|Manager|Supervisor|All*}
-
-    # test getting client information
-    response = requests.get(CLIENTS, headers=headers)
-    response_dict = json.loads(response.content)
-    return response_dict['results']
-
-
-def get_client_id(access_token: str) -> str:
-    headers = {}
-    headers['Authorization'] = f"Bearer {access_token}"
-    headers['essScope'] = "Employee"  # ?essScope={Employee|Manager|Supervisor|All*}
-
-    # test getting client information
-    response = requests.get(CLIENTS, headers=headers)
-    response_dict = json.loads(response.content)
-    return response_dict['results'][0]['id']
-
-
-def get_legals(access_token: str) -> dict:
-    headers = {}
-    headers['Authorization'] = f"Bearer {access_token}"
-    headers['essScope'] = "Employee"  # ?essScope={Employee|Manager|Supervisor|All*}
-
-    # test getting client information
-    response = requests.get(LEGALS, headers=headers)
-    response_dict = json.loads(response.content)
-    return response_dict['results']
-
-
-def get_client_and_legal_ids(access_token: str) -> tuple[str, dict]:
-    headers = {}
-    headers['Authorization'] = f"Bearer {access_token}"
-    headers['essScope'] = "Employee"  # ?essScope={Employee|Manager|Supervisor|All*}
-
-    # test getting client information
-    response = requests.get(CLIENTS, headers=headers)
-    response_dict = json.loads(response.content)
-    client_id = response_dict['results'][0]['id']
-
-    response = requests.get(LEGALS, headers=headers)
-    response_dict = json.loads(response.content)
-    # legal_id = response_dict['results'][0]['id']
-    legal_ids = response_dict['results']
-    return client_id, legal_ids
-
-def get_legal_id(legal_ids: dict, legal_name_substring: str) -> tuple[str, dict]:
-    # return the first legal id that matches the name substring
-    for legal_id in legal_ids:
-        if legal_name_substring in legal_id['legalName']:
-            return legal_id['id'], legal_id['links']
-
-    return None
-
 
 if __name__ == '__main__':
     load_dotenv()
-    access_token = get_client_credential_token()
+    access_token = get_client_credential_token(client_code=LEGAL_ID_VES)
 
     # test using the token
     # results = get_client_info(access_token)
@@ -204,6 +58,5 @@ if __name__ == '__main__':
     legal_id, legal_links = get_legal_id(legal_ids, 'Newport')
     print(f"{client_id=} {legal_id=}, {legal_links=}")
 
-
-
-
+    response = get_employee_list(access_token, client_id, legal_id, minimal=True)
+    print(f"number of employees returned: {len(response)}")
