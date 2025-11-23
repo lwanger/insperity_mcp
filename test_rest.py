@@ -19,44 +19,35 @@ Alerts in the timecardVerifications dataset can include an approaching overtime 
 Employee Dashboard - https://insperity.myisolved.com/rest/api/clients/{clientId}/legals/{legalId}/dashboard/filterOptions
 
 TODO:
-    - implement request of refresh token
-    - handle paginated results
-    - test calling links from legal_links
-    - move constants to another file
-    - safety: check return statuses and do error checking!
+    - add filters to employee endpoints
+    - implement pay endpoints
 """
 
-import base64
-import json
-import os
-
 from dotenv import load_dotenv
-import requests
 
 from insperity_rest_api import *
-
-LEGAL_ID_VES = '2502007-1'
-LEGAL_ID_NPT = '2502007-2'
-LEGAL_ID_LV = '2502007-3'
 
 
 if __name__ == '__main__':
     load_dotenv()
-    access_token = get_client_credential_token(client_code=LEGAL_ID_VES)
+
+    legal_id_ves = os.getenv('LEGAL_ID_VES')
+
+    token_dict = get_client_credential_token(client_code=legal_id_ves)
 
     # test using the token
-    # results = get_client_info(access_token)
-    # print(f"{results[0]['clientCode']=}: {results[0]['clientName']=}")
+    results = get_client_info(client_code=legal_id_ves, token_dict=token_dict)
+    print(f"{results[0]['clientCode']=}: {results[0]['clientName']=}")
 
-    # client_id = get_client_id(access_token)
-    # print(f"{client_id=}")
+    client_id = get_client_id(client_code=legal_id_ves, token_dict=token_dict)
+    print(f"{client_id=}")
 
-    # legal_ids = get_legals(access_token)
-    # print(f"{legal_ids=}")
+    legal_ids = get_legals(token_dict=token_dict)
+    print(f"{legal_ids=}")
 
-    client_id, legal_ids = get_client_and_legal_ids(access_token)
-    legal_id, legal_links = get_legal_id(legal_ids, 'Newport')
+    client_id, legal_ids = get_client_and_legal_ids(token_dict=token_dict)
+    legal_id, legal_links = get_legal_id(legal_ids=legal_ids, legal_name_substring='Newport')
     print(f"{client_id=} {legal_id=}, {legal_links=}")
 
-    response = get_employee_list(access_token, client_id, legal_id, minimal=True)
+    response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id, minimal=True)
     print(f"number of employees returned: {len(response)}")
