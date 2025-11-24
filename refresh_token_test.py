@@ -43,13 +43,13 @@ def refresh_token_test(token_dict):
             print(f"new access token: {token_dict['access_token']}")
 
 
-def refresh_token_decorator_test(client_code: str, token_dict: dict):
+def refresh_token_decorator_test(token_dict: dict):
     total_sleep_time = 0
 
     while True:
         try:
             access_token = token_dict['access_token']
-            _ = get_client_info_refresh(client_code=client_code, token_dict=token_dict)
+            _ = get_client_info_refresh(token_dict=token_dict)
 
             if token_dict['access_token'] != access_token:
                 print("access token changed")
@@ -61,13 +61,13 @@ def refresh_token_decorator_test(client_code: str, token_dict: dict):
             print("refresh_token_decorator_test: got an exception!")
 
 
-def get_client_info_test(client_code: str, token_dict: dict):
+def get_client_info_test(token_dict: dict):
     total_sleep_time = 0
 
     while True:
         try:
             access_token = token_dict['access_token']
-            _ = get_client_id(client_code=client_code, token_dict=token_dict)
+            _ = get_client_id(token_dict=token_dict)
 
             if token_dict['access_token'] != access_token:
                 print("access token changed")
@@ -98,4 +98,4 @@ if __name__ == '__main__':
     else:
         # test using the version in insperity_rest_api.py
         print("calling get client info test...")
-        get_client_info_test(legal_id_ves, token_dict)
+        get_client_info_test(token_dict)

@@ -36,10 +36,10 @@ if __name__ == '__main__':
     token_dict = get_client_credential_token(client_code=legal_id_ves)
 
     # test using the token
-    results = get_client_info(client_code=legal_id_ves, token_dict=token_dict)
+    results = get_client_info(token_dict=token_dict)
     print(f"{results[0]['clientCode']=}: {results[0]['clientName']=}")
 
-    client_id = get_client_id(client_code=legal_id_ves, token_dict=token_dict)
+    client_id = get_client_id(token_dict=token_dict)
     print(f"{client_id=}")
 
     legal_ids = get_legals(token_dict=token_dict)

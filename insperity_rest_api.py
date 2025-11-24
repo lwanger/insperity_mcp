@@ -1,5 +1,5 @@
 """
-Utitily functions for calling the Insperity REST API
+Functions for calling the Insperity REST API endpoints
 
 https://insperity.myisolved.com/rest
 
@@ -15,20 +15,14 @@ Then can get legal ID for a particular "company":
 
 Then can use these to call API endpoints:
 
-    response = get_employee_list(access_token, client_id, legal_id, minimal=True)
+    response = get_employee_list(token_dict, client_id, legal_id, minimal=True)
     print(f"number of employees returned: {len(response)}")
 
 Len Wanger
 2025
 """
 
-import base64
-from functools import wraps
-import json
-import os
-
-import requests
-
+from insperity_rest_utils import *
 
 BASE_URL = "https://insperity.myisolved.com/rest/api"
 GET_TOKEN = f"{BASE_URL}/token"  # POST
@@ -45,17 +39,16 @@ EMPLOYEES = "https://insperity.myisolved.com/rest/api/clients/{client_id}/employ
 ##############################################################################################################
 def refresh_token(f):
    @wraps(f)
-   def wrapper(client_code, token_dict, *args, **kwds):
+   def wrapper(token_dict, *args, **kwds):
        retries = 0
 
        while True:
-           response = f(client_code, token_dict, *args, **kwds)
-           # response = f(*args, **kwds)
+           response = f(token_dict, *args, **kwds)
 
            if response.status_code == 200:
                break
            elif (retries < 1) and (response.status_code == 401):  # get refresh token and try again
-               new_token_dict = get_refresh_token(client_code=client_code, token_dict=token_dict)
+               new_token_dict = get_refresh_token(token_dict=token_dict)
                token_dict['refresh_token'] = new_token_dict['refresh_token']
                token_dict['access_token'] = new_token_dict['access_token']
                retries += 1
@@ -67,29 +60,6 @@ def refresh_token(f):
        return response_dict['results']
 
    return wrapper
-
-
-##############################################################################################################
-# Utility routines used by enpoints
-##############################################################################################################
-def to_mime_base64(input_string: str) -> str:
-    """
-    Convert a string to RFC2045-MIME variant of Base64.
-    """
-    byte_data = input_string.encode("utf-8")
-    mime_encoded = base64.b64encode(byte_data)
-    return mime_encoded.decode("utf-8")
-
-
-def get_combined_key() -> str:
-    return to_mime_base64(f"{os.getenv('INSPERITY_CLIENT_ID')}:{os.getenv('INSPERITY_SECRET')}")
-
-
-def get_headers(access_token: str) -> dict:
-    return {
-        'Authorization': f"Bearer {access_token}",
-        'essScope': "Employee"  # ?essScope={Employee|Manager|Supervisor|All*}
-    }
 
 
 ##############################################################################################################
@@ -123,16 +93,16 @@ def get_client_credential_token(client_code: str) -> dict:
 
     return {
         'access_token': response_dict['access_token'], 
-        'refresh_token': response_dict['refresh_token']
+        'refresh_token': response_dict['refresh_token'],
+        'client_code': client_code
     }
 
 
-def get_refresh_token(client_code: str, token_dict: dict) -> dict:
+def get_refresh_token(token_dict: dict) -> dict:
     """
     Get refresh token using refresh_token grant type.
     
-    :param client_code: 
-    :param token_dict: 
+    :param token_dict:
     :return: dictionary containing access_token and refresh_token
     """
     combined_key = get_combined_key()
@@ -145,7 +115,7 @@ def get_refresh_token(client_code: str, token_dict: dict) -> dict:
     payload = {
         "grant_type": "refresh_token",
         "refresh_token": token_dict['refresh_token'],
-        "clientCode": client_code,
+        "clientCode": token_dict['client_code']
     }
 
     response = requests.post(GET_TOKEN, headers=headers, data=payload)
@@ -155,14 +125,16 @@ def get_refresh_token(client_code: str, token_dict: dict) -> dict:
             f"Error getting client information (status={response.status_code}): {response.text}")
 
     response_dict = json.loads(response.content)
+
     return {
         'access_token': response_dict['access_token'], 
-        'refresh_token': response_dict['refresh_token']
+        'refresh_token': response_dict['refresh_token'],
+        'client_code': token_dict['client_code']
     }
 
 
 @refresh_token
-def get_client_info(client_code: str, token_dict: dict) -> dict:
+def get_client_info(token_dict: dict) -> dict:
     # test getting client information
     headers = get_headers(token_dict['access_token'])
     response = requests.get(CLIENTS, headers=headers)
@@ -170,7 +142,7 @@ def get_client_info(client_code: str, token_dict: dict) -> dict:
 
 
 @refresh_token
-def get_client_id(client_code: str, token_dict: dict) -> str:
+def get_client_id(token_dict: dict) -> str:
     # test getting client information
     headers = get_headers(token_dict['access_token'])
     response = requests.get(CLIENTS, headers=headers)
@@ -217,32 +189,6 @@ def get_legal_id(legal_ids: dict, legal_name_substring: str) -> tuple[str, dict]
             return legal_id['id'], legal_id['links']
 
     return None
-
-
-# def call_legal_link(access_token: str, legal_links: dict, endpoint: str) -> dict:
-#     """
-#     call from dict of legal links. Endpoints are:
-#         self (legals)
-#         parent
-#         Employees
-#         Detailed
-#         Timeclocks
-#         MiscFields
-#     """
-#     headers = get_headers(access_token)
-#
-#     for legal_link in legal_links:
-#         if legal_link['rel'] == endpoint:
-#             response = requests.get(legal_link['href'], headers=headers)
-#
-#             if response.status_code != 200:
-#                 raise requests.exceptions.HTTPError(
-#                     f"Error getting client information (status={response.status_code}): {response.text}")
-#
-#             response_dict = json.loads(response.content)
-#             return response_dict
-#
-#         raise ValueError(f"Endpoint {endpoint} not found in legal links")
 
 
 def get_employee_list(token_dict: dict, client_id: str, legal_id: str, minimal=True) -> list[dict]:
