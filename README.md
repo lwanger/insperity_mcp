@@ -16,3 +16,4 @@ python-dotenv is used to store environment variables, including API credentials.
 
 - INSPERITY_CLIENT_ID = api_client_id
 - INSPERITY_SECRET = api_secret
+- client id's
