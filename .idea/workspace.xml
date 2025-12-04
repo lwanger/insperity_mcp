@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="17c6e325-938d-4a9d-a5e3-1c819963713a" name="Changes" comment="moved client code into token_dict. split insperity_rest_api.py utility routines unto a separate file.">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/insperity_mcp.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.ignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insperity_rest_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/insperity_rest_api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_rest.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_rest.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="35dQE28rZeLxeK2eBcom91qokE9" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.insperity_rest_api.executor": "Debug",
+    "Python.refresh_token_test.executor": "Debug",
+    "Python.test_rest.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "master",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-PY-252.28238.29" />
+        <option value="bundled-python-sdk-a101402ee41c-968fe969f28a-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.28238.29" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="17c6e325-938d-4a9d-a5e3-1c819963713a" name="Changes" comment="" />
+      <created>1763437353922</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1763437353922</updated>
+      <workItem from="1763437355019" duration="2235000" />
+      <workItem from="1763526745441" duration="15985000" />
+      <workItem from="1763756168118" duration="27249000" />
+      <workItem from="1764799544193" duration="3010000" />
+    </task>
+    <task id="LOCAL-00001" summary="Got initial REST call working. Getting access token and calling endpoint to get client info for the VES company.&#10;&#10;Lots TODO: refresh tokens, multiple pages, etc.">
+      <option name="closed" value="true" />
+      <created>1763701927922</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1763701927922</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Some cleanup of methods">
+      <option name="closed" value="true" />
+      <created>1763702535273</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1763702535273</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Added calls to get client and legal ids">
+      <option name="closed" value="true" />
+      <created>1763703990233</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1763703990233</updated>
+    </task>
+    <task id="LOCAL-00004" summary="broke rest calls into separate file (insperity_rest_api), cleaned up calls (e.g. broke out code to get headers and checking return statuses). Added endpoint to get employee list (multiple pages).">
+      <option name="closed" value="true" />
+      <created>1763783025885</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1763783025885</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Got get_refresh_token working!">
+      <option name="closed" value="true" />
+      <created>1763868930965</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1763868930965</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Implemented refresh_token decorator. Got refresh_token_test working with new client_info call (using decorator). TODO: add refresh_token decorator to rest of api endpoints.">
+      <option name="closed" value="true" />
+      <created>1763879623382</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1763879623382</updated>
+    </task>
+    <task id="LOCAL-00007" summary="moved client code into token_dict. split insperity_rest_api.py utility routines unto a separate file.">
+      <option name="closed" value="true" />
+      <created>1763961418760</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1763961418760</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Got initial REST call working. Getting access token and calling endpoint to get client info for the VES company.&#10;&#10;Lots TODO: refresh tokens, multiple pages, etc." />
+    <MESSAGE value="Some cleanup of methods" />
+    <MESSAGE value="Added calls to get client and legal ids" />
+    <MESSAGE value="broke rest calls into separate file (insperity_rest_api), cleaned up calls (e.g. broke out code to get headers and checking return statuses). Added endpoint to get employee list (multiple pages)." />
+    <MESSAGE value="Got get_refresh_token working!" />
+    <MESSAGE value="Implemented refresh_token decorator. Got refresh_token_test working with new client_info call (using decorator). TODO: add refresh_token decorator to rest of api endpoints." />
+    <MESSAGE value="moved client code into token_dict. split insperity_rest_api.py utility routines unto a separate file." />
+    <option name="LAST_COMMIT_MESSAGE" value="moved client code into token_dict. split insperity_rest_api.py utility routines unto a separate file." />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/test_rest.py</url>
+          <line>85</line>
+          <option name="timeStamp" value="50" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/test_rest.py</url>
+          <line>80</line>
+          <option name="timeStamp" value="58" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/test_rest.py</url>
+          <line>75</line>
+          <option name="timeStamp" value="59" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/test_rest.py</url>
+          <line>71</line>
+          <option name="timeStamp" value="60" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/test_rest.py</url>
+          <line>68</line>
+          <option name="timeStamp" value="61" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/test_rest.py</url>
+          <line>74</line>
+          <option name="timeStamp" value="62" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/test_rest.py</url>
+          <line>78</line>
+          <option name="timeStamp" value="63" />
+        </line-breakpoint>
+      </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="employee_list[37]['middleInitial']" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/insperity_mcp$test_rest.coverage" NAME="test_rest Coverage Results" MODIFIED="1764802407254" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/insperity_mcp$insperity_rest_api.coverage" NAME="insperity_rest_api Coverage Results" MODIFIED="1763878036368" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/insperity_mcp$refresh_token_test.coverage" NAME="refresh_token_test Coverage Results" MODIFIED="1763960748949" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
+</project>
