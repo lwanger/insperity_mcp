@@ -5,7 +5,7 @@ Insperity MCP project
 TODO:
 
 - test Insperity REST API
-  - employee list: add filters: status, search text, ssn filter, user id
+  - employee list: add filters: giuser id
   - get check details (requires employee id)
 - use FastMCP to build MCP server
 - add ability to get employee profile to MCP
@@ -16,4 +16,4 @@ python-dotenv is used to store environment variables, including API credentials.
 
 - INSPERITY_CLIENT_ID = api_client_id
 - INSPERITY_SECRET = api_secret
-- client id's
+- cgit rm --cached file2.txtlient id's
