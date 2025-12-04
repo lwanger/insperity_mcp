@@ -201,13 +201,33 @@ def get_client_and_legal_ids(token_dict: dict) -> tuple[str, dict]:
     return client_id, legal_ids
 
 
-def get_legal_id(legal_ids: dict, legal_name_substring: str) -> tuple[str, dict]:
+def get_legal_id(legal_ids: dict, legal_name_substring: str|None) -> tuple[str, dict]:
     # return the first legal id that matches the name substring
-    for legal_id in legal_ids:
-        if legal_name_substring in legal_id['legalName']:
-            return legal_id['id'], legal_id['links']
+    if (len(legal_ids)==1) or (legal_name_substring is None):
+        return legal_ids[0]['id']
+    else:
+        for legal_id in legal_ids:
+            if legal_name_substring in legal_id['legalName']:
+                return legal_id['id']
 
     return None
+
+
+def get_credentials(client_code: str, legal_name_substring: str|None = None):
+    """
+    Get access token, client ID, and legal ID -- this is the simplest way to get started
+    Calling the REST API endpoints, assuming you only will be using the same legal_id (company)
+    for all calls
+
+    :param client_code:
+    :param legal_name_substring:
+    :return: tuple of three values: token dictionary, client ID, legal ID
+    """
+    token_dict = get_client_credential_token(client_code=client_code)
+    client_id, legal_ids = get_client_and_legal_ids(token_dict=token_dict)
+    legal_id = get_legal_id(legal_ids=legal_ids, legal_name_substring=legal_name_substring)
+
+    return token_dict, client_id, legal_id
 
 
 def process_employee_list(url: str, headers: dict, params: dict) -> list[dict]:

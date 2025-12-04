@@ -86,10 +86,7 @@ def get_client_info_test(token_dict: dict):
 if __name__ == '__main__':
     load_dotenv()
     legal_id_ves = os.getenv('LEGAL_ID_VES')
-    token_dict = get_client_credential_token(client_code=legal_id_ves)
-
-    client_id, legal_ids = get_client_and_legal_ids(token_dict)
-    legal_id, legal_links = get_legal_id(legal_ids, 'Newport')
+    token_dict, client_id, legal_id = get_credentials(client_code=legal_id_ves)
 
     if False:
         # test fetching refresh token

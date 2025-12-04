@@ -3,16 +3,36 @@ Insperity MCP project
 
 Python package to interact with Insperity REST API.
 
-For examples on how to use the package, see the examples folder.
+For examples on how to use the package, see the examples folder. The simplest example is:
+
+```
+    from dotenv import load_dotenv
+    from insperity_rest_api import *
+
+    my_client_code = 'your client code here'  
+
+    # Get access credentials (token_dict, client_id, legal_id) to call the API endpoints
+    token_dict, client_id, legal_id = get_credentials(client_code=my_client_code, legal_name_substring=None)
+
+    # Use the access credentials to call an API endpoint
+    response = get_minimal_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id)
+```
+
+note: don't put your client code in the script like was done above! See the examples in the
+examples folder for how to use environment variables to store your client code.
 
 The insperity_mcp package can be found on GitHub at:
 
     https://github.com/lwanger/insperity_mcp
 
+Documentation for the Insperity REST API endpoints:
+
+    http://insperity.myisolved.com/rest
+
 TODO:
 
 - test Insperity REST API
-  - employee list: add filters: giuser id
+  - employee list: add filters: user id
   - get check details (requires employee id)
   - implement additional REST API endpoints
 - use FastMCP to build MCP server

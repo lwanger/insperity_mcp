@@ -8,6 +8,11 @@ Documentation for the Insperity REST API endpoints:
 
     http://insperity.myisolved.com/rest
 
+All of the API calls require a token_dict (containing access_token and refresh_token) and client_id and most
+require a legal_id. If you are only using one legal_id for all calls, you can use the get_credentials function to
+get all three values for you (as done below). If not, you can use the get_client_and_legal_ids function to get the
+client_id and then use the get_legal_id function to get the legal_id for a particular legal company.
+
 Len Wanger
 2025
 """
@@ -21,14 +26,13 @@ if __name__ == '__main__':
     # load environment variables from .env file, such as client_code and api secret
     load_dotenv()
 
-    # get access token, client ID, and legal ID
+    #  You will want to use your own values for the LEGAL_ID and legal_name_substring variables
     legal_id_ves = os.getenv('LEGAL_ID_VES')
-    token_dict = get_client_credential_token(client_code=legal_id_ves)
 
-    client_id, legal_ids = get_client_and_legal_ids(token_dict=token_dict)
-    legal_id, legal_links = get_legal_id(legal_ids=legal_ids, legal_name_substring='Vegas')
+    # Get access credentials (token_dict, client_id, legal_id) to call the API endpoints
+    token_dict, client_id, legal_id = get_credentials(client_code=legal_id_ves, legal_name_substring=None)
 
-    # call the API endpoint to get a list of employees
+    # call the employees API endpoint to get a list of employees
     response = get_minimal_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id)
 
     # print number of employees returned and first employee details

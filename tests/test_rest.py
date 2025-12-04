@@ -59,8 +59,8 @@ if __name__ == '__main__':
     print(f"{legal_ids=}")
 
     client_id, legal_ids = get_client_and_legal_ids(token_dict=token_dict)
-    legal_id, legal_links = get_legal_id(legal_ids=legal_ids, legal_name_substring='Vegas')
-    print(f"{client_id=} {legal_id=}, {legal_links=}")
+    legal_id = get_legal_id(legal_ids=legal_ids, legal_name_substring='Vegas')
+    print(f"{client_id=} {legal_id=}")
 
     print("Call get_employee_list tests:\n")
 
