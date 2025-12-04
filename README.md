@@ -3,7 +3,11 @@ Insperity MCP project
 
 Python package to interact with Insperity REST API.
 
-For examples on how to use the package, see the tests folder.
+For examples on how to use the package, see the examples folder.
+
+The insperity_mcp package can be found on GitHub at:
+
+    https://github.com/lwanger/insperity_mcp
 
 TODO:
 

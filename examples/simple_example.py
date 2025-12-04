@@ -1,26 +1,15 @@
 """
-Test Insperity REST API
+Simple example of calling the Insperity REST API using the insperity_mcp package.
 
-Sample endpoints on the call:
+This example gets the access token, client ID, and legal ID, then calls the API endpoint to get a list of employees and
+prints some of the first employee's details.
 
-    To get your client ID and legal company ID that will be referenced in other endpoints:
-    List of Clients - https://insperity.myisolved.com/rest/api/clients
-    List of Legal Companies - https://insperity.myisolved.com/rest/api/legals
+Documentation for the Insperity REST API endpoints:
 
-To get the employee IDs that will be referenced in the other endpoints:
-Get Minimal Employee List – returns the employee ID, name, email, and a few other basic employee details - https://insperity.myisolved.com/rest/api/clients/{clientId}/legals/{legalId}/employeesMinimal
-Get Employees by Client – returns lots of employee demographic details (if you need it) - https://insperity.myisolved.com/rest/api/clients/{clientId}/employees
+    http://insperity.myisolved.com/rest
 
-
-To get the time card punches to track in / out status
-Get time card data (there is a version where you can pass a date parameter too) - https://insperity.myisolved.com/rest/api/clients/{clientId}/legals/{legalId}/employees/{employeeId}/timecardView
-Use the timecardHourResults dataset to get information after the time rules are applied
-Alerts in the timecardVerifications dataset can include an approaching overtime alert if we build that in your system
-Employee Dashboard - https://insperity.myisolved.com/rest/api/clients/{clientId}/legals/{legalId}/dashboard/filterOptions
-
-TODO:
-    - add filters to employee endpoints
-    - implement pay endpoints
+Len Wanger
+2025
 """
 
 from dotenv import load_dotenv
