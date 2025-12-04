@@ -15,7 +15,7 @@ Then can get legal ID for a particular "company":
 
 Then can use these to call API endpoints:
 
-    response = get_employee_list(token_dict, client_id, legal_id, minimal=True)
+    response = get_employee_list(token_dict, client_id, legal_id)
     print(f"number of employees returned: {len(response)}")
 
 TODO:
@@ -26,7 +26,13 @@ Len Wanger
 2025
 """
 
+import json
+from functools import wraps
+
+import requests
+
 from insperity_rest_utils import *
+
 
 BASE_URL = "https://insperity.myisolved.com/rest/api"
 GET_TOKEN = f"{BASE_URL}/token"  # POST

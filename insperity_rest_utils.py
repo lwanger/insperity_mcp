@@ -8,42 +8,7 @@ Len Wanger
 """
 
 import base64
-from functools import wraps
-import json
 import os
-
-import requests
-
-
-# ##############################################################################################################
-# # Refresh token decorator -- used to wrap endpoint functions that call the REST API. Will call to refresh the
-# #   refresh token if access token expires, otherwise will just return the response from the endpoint function
-# #   or raise an exception if the status code is not 200.
-# ##############################################################################################################
-# def refresh_token(f):
-#    @wraps(f)
-#    def wrapper(token_dict, *args, **kwds):
-#        retries = 0
-#
-#        while True:
-#            response = f(token_dict, *args, **kwds)
-#
-#            if response.status_code == 200:
-#                break
-#            elif (retries < 1) and (response.status_code == 401):  # get refresh token and try again
-#                # new_token_dict = get_refresh_token(client_code=client_code, token_dict=token_dict)
-#                new_token_dict = get_refresh_token(token_dict=token_dict)
-#                token_dict['refresh_token'] = new_token_dict['refresh_token']
-#                token_dict['access_token'] = new_token_dict['access_token']
-#                retries += 1
-#            else:
-#                raise requests.exceptions.HTTPError(
-#                    f"Error call {f.__name__} (status={response.status_code}): {response.text}")
-#
-#        response_dict = json.loads(response.content)
-#        return response_dict['results']
-#
-#    return wrapper
 
 
 ##############################################################################################################

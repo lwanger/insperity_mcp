@@ -3,6 +3,10 @@ Test getting refresh tokens.
 
 Loop until access token expires, then get new refresh token.
 
+refresh_token_decorator_test tests using the refresh token decorator. This decorator wraps a function that calls a REST
+ API endpoint will automatically refresh an expired access token and automatically retry the call if the access token
+ expires.
+
 Len Wanger
 2025
 """

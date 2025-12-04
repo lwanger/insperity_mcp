@@ -34,46 +34,45 @@ if __name__ == '__main__':
     legal_id_ves = os.getenv('LEGAL_ID_VES')
     legal_id_lv = os.getenv('LEGAL_ID_LV')
 
-    # token_dict = get_client_credential_token(client_code=legal_id_ves)
-    token_dict = get_client_credential_token(client_code=legal_id_lv)
+    token_dict = get_client_credential_token(client_code=legal_id_ves)
+    # token_dict = get_client_credential_token(client_code=legal_id_lv)
 
     # test using the token
     print("Call get_client_info:\n")
     results = get_client_info(token_dict=token_dict)
     print(f"get_client_info: {results[0]['clientCode']=}: {results[0]['clientName']=}")
 
-    # client_code_filter = legal_id_lv
-    # results = get_client_info(token_dict=token_dict, client_code_filter=client_code_filter)
-    # print(f"get_client_info w/ clientCodeFilter={client_code_filter}: {results[0]['clientCode']=}: {results[0]['clientName']=}")
+    client_code_filter = legal_id_lv
+    results = get_client_info(token_dict=token_dict, client_code_filter=client_code_filter)
+    print(f"get_client_info w/ clientCodeFilter={client_code_filter}: {results[0]['clientCode']=}: {results[0]['clientName']=}")
 
-    # search_text = "Newport"
-    # results = get_client_info(token_dict=token_dict, search_text=search_text)
-    # print(f"get_client_info w/ clientCodeFilter={client_code_filter}: {results[0]['clientCode']=}: {results[0]['clientName']=}")
+    search_text = "Newport"
+    results = get_client_info(token_dict=token_dict, search_text=search_text)
+    print(f"get_client_info w/ clientCodeFilter={client_code_filter}: {results[0]['clientCode']=}: {results[0]['clientName']=}")
 
-    # print("")
+    print("")
 
     client_id = get_client_id(token_dict=token_dict)
     print(f"{client_id=}")
 
-    # legal_ids = get_legals(token_dict=token_dict)
-    # print(f"{legal_ids=}")
+    legal_ids = get_legals(token_dict=token_dict)
+    print(f"{legal_ids=}")
 
     client_id, legal_ids = get_client_and_legal_ids(token_dict=token_dict)
     legal_id, legal_links = get_legal_id(legal_ids=legal_ids, legal_name_substring='Vegas')
-    # print(f"{client_id=} {legal_id=}, {legal_links=}")
+    print(f"{client_id=} {legal_id=}, {legal_links=}")
 
-    print("Call get_employee_list:\n")
+    print("Call get_employee_list tests:\n")
 
+    response = get_minimal_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id)
+    print(f"get_minimal_employee_list: number of employees returned: {len(response)}")
 
-    # response = get_minimal_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id)
-    # print(f"get_minimal_employee_list: number of employees returned: {len(response)}")
+    response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id)
+    print(f"get_employee_list: number of employees returned: {len(response)}")
 
-    # response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id)
-    # print(f"get_employee_list: number of employees returned: {len(response)}")
-
-    # status_filter = "Active" #  "Terminated"
-    # response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id, employee_status_filter=status_filter)
-    # print(f"get_employee_list w/ employee_status_filter={status_filter}: number of employees returned: {len(response)}")
+    status_filter = "Active" #  "Terminated"
+    response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id, employee_status_filter=status_filter)
+    print(f"get_employee_list w/ employee_status_filter={status_filter}: number of employees returned: {len(response)}")
 
     status_filter = "Terminated"
     response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id,
