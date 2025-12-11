@@ -39,6 +39,16 @@ TODO:
 - add ability to get employee profile to MCP
 - make an example for NEST: get employees hired since last 120 day check,
     termed since last check, get email address and send email to employee
+- running locally: 
+  - Goose?: https://block.github.io/goose/docs/goose-architecture/
+  - https://blog.craigers.rocks/mcp-ollama/
+  - or: https://github.com/Sanjaykrishnamurthy/mcp-ollama-integration
+  - or: https://thomas.trocha.com/blog/creating-a-world-time-mcp-server-and-agent-with-a-local-ollama-llm-llama3-1-latest-on-linux/
+  - or: https://github.com/rajeevchandra/mcp-client-server-example
+  - or: https://medium.com/@techofhp/simple-mcp-tools-demo-using-fastmcp-and-a-local-llm-d266b8a166bd
+  - or: https://medium.com/@smrati.katiyar/building-mcp-server-and-client-in-python-and-using-ollama-as-llm-provider-dd79fe3a2b16
+- https://github.com/open-webui/open-webui
+
 
 python-dotenv is used to manage environment variables, including API credentials. Variables,
 such as API credentials, should be stored in a .env file. Dotenv will automatically load variables

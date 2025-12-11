@@ -1,8 +1,6 @@
 """
-Simple example of calling the Insperity REST API using the insperity_mcp package.
-
-This example gets the access token, client ID, and legal ID, then calls the API endpoint to get a list of employees and
-prints some of the first employee's details.
+Example of calling the Insperity REST API get_employees endpoint. This example searches for only active employees,
+ and returns social security numbers.
 
 Documentation for the Insperity REST API endpoints:
 
@@ -32,14 +30,16 @@ if __name__ == '__main__':
     # Get access credentials (token_dict, client_id, legal_id) to call the API endpoints
     token_dict, client_id, legal_id = get_credentials(client_code=legal_id_ves, legal_name_substring=None)
 
-    # call the employees API endpoint to get a list of employees
-    response = get_minimal_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id)
+    # call the employees API endpoint to get a list of employees (who have 'Active' employment status), including SSN'
+    response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id,
+        employee_status_filter="Active", with_ssn=True)
 
     # print number of employees returned and first employee details
     print(f"get_employee_list: number of employees returned: {len(response)}")
 
     if len(response) > 0:
         employee = response[0]
-        print(f"first name: {employee.first_name}, last name: {employee.last_name}, employee number: {employee.employee_number}, employee status {employee.employment_status}")
+        ssn_last_four = f"***-**-{employee.ssn[7:]}"
+        print(f"first name: {employee.first_name}, last name: {employee.last_name}, employee number: {employee.employee_number}, employee status: {employee.employment_status}, ssn: {ssn_last_four}")
 
     print("\nDone!")

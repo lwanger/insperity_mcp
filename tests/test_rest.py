@@ -64,8 +64,12 @@ if __name__ == '__main__':
 
     print("Call get_employee_list tests:\n")
 
+
     response = get_minimal_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id)
     print(f"get_minimal_employee_list: number of employees returned: {len(response)}")
+
+    response = get_employee_list_raw(token_dict=token_dict, client_id=client_id, legal_id=legal_id)
+    print(f"get_minimal_employee_list_raw: number of employees returned: {len(response)}")
 
     response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id)
     print(f"get_employee_list: number of employees returned: {len(response)}")
@@ -83,3 +87,5 @@ if __name__ == '__main__':
     # search_text = "Jimenez"
     response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id, search_text=search_text)
     print(f"get_employee_list w/ search_text={search_text}: number of employees returned: {len(response)}")
+
+    print("\nDone")

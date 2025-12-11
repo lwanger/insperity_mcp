@@ -251,8 +251,10 @@ def process_employee_list(url: str, headers: dict, params: dict) -> list[dict]:
     return employee_list
 
 
-def get_minimal_employee_list(token_dict: dict, client_id: str, legal_id: str, employee_status_filter: str|None=None) -> list[dict]:
+def get_minimal_employee_list_raw(token_dict: dict, client_id: str, legal_id: str, employee_status_filter: str|None=None) -> list[dict]:
     """
+    get a raw list of minimal employee records. Each item in the list is the raw dictionary response from the REST API endpoint.
+
     :param token_dict:
     :param client_id:
     :param legal_id:
@@ -270,9 +272,27 @@ def get_minimal_employee_list(token_dict: dict, client_id: str, legal_id: str, e
     return process_employee_list(url, headers, params)
 
 
-def get_employee_list(token_dict: dict, client_id: str, legal_id: str, employee_status_filter: str|None=None,
+def get_minimal_employee_list(token_dict: dict, client_id: str, legal_id: str, employee_status_filter: str|None=None) -> list[MinimalEmployee]:
+    """
+    get a list of minimal employee records. Each item in the list is an MinimalEmployee object.
+
+    :param token_dict:
+    :param client_id:
+    :param legal_id:
+    :param employee_status_filter:
+    :return:
+    """
+    raw_list = get_minimal_employee_list_raw(token_dict, client_id, legal_id, employee_status_filter)
+
+    employee_list = [fill_minimal_employee_record(raw_employee) for raw_employee in raw_list]
+    return employee_list
+
+
+def get_employee_list_raw(token_dict: dict, client_id: str, legal_id: str, employee_status_filter: str|None=None,
                       search_text: str|None = None, with_ssn: bool=False) -> list[dict]:
     """
+    get a raw list of employee records. Each item in the list is the raw dictionary response from the REST API endpoint.
+
     :param token_dict:
     :param client_id:
     :param legal_id:
@@ -297,3 +317,23 @@ def get_employee_list(token_dict: dict, client_id: str, legal_id: str, employee_
         params['searchText'] = search_text
 
     return process_employee_list(url, headers, params)
+
+
+def get_employee_list(token_dict: dict, client_id: str, legal_id: str, employee_status_filter: str|None=None,
+                      search_text: str|None = None, with_ssn: bool=False) -> list[Employee]:
+    """
+    get a list of employee records. Each item in the list is an Employee object.
+
+    :param token_dict:
+    :param client_id:
+    :param legal_id:
+    :param employee_status_filter:
+    :param search_text:
+    :param with_ssn:
+    :return: list of Employee objects
+    """
+    raw_list = get_employee_list_raw(token_dict=token_dict, client_id=client_id, legal_id=legal_id,
+                                     employee_status_filter=employee_status_filter, search_text=search_text, with_ssn=with_ssn)
+
+    employee_list = [fill_employee_record(raw_employee) for raw_employee in raw_list]
+    return employee_list
