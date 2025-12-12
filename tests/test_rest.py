@@ -33,6 +33,7 @@ if __name__ == '__main__':
 
     legal_id_ves = os.getenv('LEGAL_ID_VES')
     legal_id_lv = os.getenv('LEGAL_ID_LV')
+    legal_id_npt = os.getenv('LEGAL_ID_NPT')
 
     token_dict = get_client_credential_token(client_code=legal_id_ves)
     # token_dict = get_client_credential_token(client_code=legal_id_lv)
@@ -64,28 +65,42 @@ if __name__ == '__main__':
 
     print("Call get_employee_list tests:\n")
 
+    if False:
+        response = get_minimal_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id)
+        print(f"get_minimal_employee_list: number of employees returned: {len(response)}")
 
-    response = get_minimal_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id)
-    print(f"get_minimal_employee_list: number of employees returned: {len(response)}")
+        response = get_employee_list_raw(token_dict=token_dict, client_id=client_id, legal_id=legal_id)
+        print(f"get_minimal_employee_list_raw: number of employees returned: {len(response)}")
 
-    response = get_employee_list_raw(token_dict=token_dict, client_id=client_id, legal_id=legal_id)
-    print(f"get_minimal_employee_list_raw: number of employees returned: {len(response)}")
+        response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id)
+        print(f"get_employee_list: number of employees returned: {len(response)}")
 
-    response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id)
-    print(f"get_employee_list: number of employees returned: {len(response)}")
+        status_filter = "Active" #  "Terminated"
+        response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id, employee_status_filter=status_filter)
+        print(f"get_employee_list w/ employee_status_filter={status_filter}: number of employees returned: {len(response)}")
 
-    status_filter = "Active" #  "Terminated"
-    response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id, employee_status_filter=status_filter)
-    print(f"get_employee_list w/ employee_status_filter={status_filter}: number of employees returned: {len(response)}")
+        status_filter = "Terminated"
+        response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id,
+                                     employee_status_filter=status_filter, with_ssn=True)
+        print(f"get_employee_list w/ employee_status_filter={status_filter} w ssn: number of employees returned: {len(response)}")
 
-    status_filter = "Terminated"
-    response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id,
-                                 employee_status_filter=status_filter, with_ssn=True)
-    print(f"get_employee_list w/ employee_status_filter={status_filter} w ssn: number of employees returned: {len(response)}")
+        search_text = "Clayton"
+        # search_text = "Jimenez"
+        response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id, search_text=search_text)
+        print(f"get_employee_list w/ search_text={search_text}: number of employees returned: {len(response)}")
 
-    search_text = "Clayton"
-    # search_text = "Jimenez"
-    response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id, search_text=search_text)
-    print(f"get_employee_list w/ search_text={search_text}: number of employees returned: {len(response)}")
+    # test get_employee_by_id
+    legal_id_npt = get_legal_id(legal_ids=legal_ids, legal_name_substring='Newport')
+    response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id_npt, search_text="Neace")
+    employee_id = response[0].id
+    response = get_employee_by_id(token_dict=token_dict, client_id=client_id, legal_id=legal_id_npt, employee_id = employee_id)
+    print(response['nameAddress'])
+
+    legal_id_ves = get_legal_id(legal_ids=legal_ids, legal_name_substring=None)
+    response = get_employee_list(token_dict=token_dict, client_id=client_id, legal_id=legal_id_ves, search_text="Deane")
+    employee_id = response[0].id
+    response = get_employee_by_id(token_dict=token_dict, client_id=client_id, legal_id=legal_id_ves, employee_id = employee_id)
+    print(response['nameAddress'])
+
 
     print("\nDone")

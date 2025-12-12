@@ -28,11 +28,11 @@ def get_combined_key() -> str:
     return to_mime_base64(f"{os.getenv('INSPERITY_CLIENT_ID')}:{os.getenv('INSPERITY_SECRET')}")
 
 
-def get_headers(access_token: str) -> dict:
+def get_headers(access_token: str, essScope: str="Employee") -> dict:
     # create header dictionary used by requests for REST API calls
     return {
         'Authorization': f"Bearer {access_token}",
-        'essScope': "Employee"  # ?essScope={Employee|Manager|Supervisor|All*}
+        'essScope': essScope  # ?essScope={Employee|Manager|Supervisor|All*}
     }
 
 

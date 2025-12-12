@@ -67,6 +67,8 @@ EMPLOYEE_TIMECARD_DATA = "{base_url}/clients/{client_id}/legals/{legal_id}/emplo
 EMPLOYEE_CHECKS = "{base_url}/clients/{client_id}/legals/{legal_id}/employees/{employee_id}/checks"
 EMPLOYEE_PAYROLL = "{base_url}/clients/{client_id}/legals/{legal_id}/employees/{employee_id}/payroll"
 
+EMPLOYEE_BY_ID = "{base_url}/clients/{client_id}/legals/{legal_id}/employees/{employee_id}"
+
 
 ##############################################################################################################
 # Refresh token decorator -- used to wrap endpoint functions that call the REST API. Will call to refresh the
@@ -255,7 +257,19 @@ def get_credentials(client_code: str, legal_name_substring: str|None = None):
     return token_dict, client_id, legal_id
 
 
+def process_response(url: str, headers: dict, params: dict) -> list[dict]:
+    # process a simple (not multipage) response from the REST API endpoint
+    response = requests.get(url, headers=headers, params=params)
+
+    if response.status_code != 200:
+        raise requests.exceptions.HTTPError(
+            f"Error getting data from REST api (status={response.status_code}): {response.text}")
+
+    return json.loads(response.content)
+
+
 def process_multipage_response(url: str, headers: dict, params: dict) -> list[dict]:
+    # process a multipage response from the REST API endpoint
     response_list = []
 
     while True:
@@ -367,7 +381,7 @@ def get_employee_list(token_dict: dict, client_id: str, legal_id: str, employee_
 # Experimental end points
 ####
 
-def get_employee_timecard_data_raw(token_dict: dict, client_id: str, legal_id: str, employee_id: int,
+def get_employee_timecard_data_raw(token_dict: dict, client_id: str, legal_id: str, employee_id: str,
                           start_date: date | None = None, end_date: date | None = None) -> list[dict]:
     """
     NOT WORKING!
@@ -401,7 +415,7 @@ def get_employee_timecard_data_raw(token_dict: dict, client_id: str, legal_id: s
     return process_multipage_response(url, headers, params)
 
 
-def get_employee_checks_raw(token_dict: dict, client_id: str, legal_id: str, employee_id: int,
+def get_employee_checks_raw(token_dict: dict, client_id: str, legal_id: str, employee_id: str,
                           year_filter: int | None = None, include_details: bool | None = None) -> list[dict]:
     """
     get a raw list of employee checks
@@ -418,7 +432,7 @@ def get_employee_checks_raw(token_dict: dict, client_id: str, legal_id: str, emp
     headers = get_headers(token_dict['access_token'])
     params = {}
 
-    url = EMPLOYEE_TIMECARD_DATA.format(base_url=BASE_URL, client_id=client_id, legal_id=legal_id, employee_id=employee_id)
+    url = EMPLOYEE_CHECKS.format(base_url=BASE_URL, client_id=client_id, legal_id=legal_id, employee_id=employee_id)
 
     print(f"{url=}")  # DEBUG
 
@@ -429,3 +443,26 @@ def get_employee_checks_raw(token_dict: dict, client_id: str, legal_id: str, emp
         params['includeDetails'] = include_details
 
     return process_multipage_response(url, headers, params)
+
+
+
+
+def get_employee_by_id(token_dict: dict, client_id: str, legal_id: str, employee_id: str) -> list[dict]:
+    """
+    get employee by id
+
+    NOTE: LOTS OF FILTERS TO IMPLEMENT
+
+    :param token_dict:
+    :param client_id:
+    :param legal_id:
+    :param employee_id:
+    :return: return data for the employee
+    """
+    headers = get_headers(token_dict['access_token'])
+    params = {}
+
+    url = EMPLOYEE_BY_ID.format(base_url=BASE_URL, client_id=client_id, legal_id=legal_id, employee_id=employee_id)
+
+    print(f"{url=}")  # DEBUG
+    return process_response(url, headers, params)
