@@ -6,7 +6,7 @@ Len Wanger
 """
 
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 
 
 @dataclass
@@ -62,6 +62,18 @@ class Employee:
     annual_salary: float = 0.0
     ssn: str = None
 
+    def age(self) -> float:
+        # return age in years
+        return (date.today() - self.birth_date) / timedelta(days=365.25)
+
+    def older_than(self, years_old: int) -> bool:
+        # return true if employee is older than given age
+        return self.age() >= years_old
+
+    def tenure(self) -> int:
+        # return days since hire
+        return (date.today() - self.hire_date).days
+
 
 if __name__ == '__main__':
     employee_1 = Employee(
@@ -78,5 +90,10 @@ if __name__ == '__main__':
         hourly_rate= 17.5,
         ssn= None
     )
+
+    print(f"age in years = {employee_1.age():.2f}")
+    print(f"old then 18 = {employee_1.older_than(years_old=18)}")
+    print(f"older then 70 = {employee_1.older_than(years_old=70)}")
+    print(f"tenure (days since hire) = {employee_1.tenure()}")
 
     print(employee_1)

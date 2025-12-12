@@ -32,13 +32,13 @@ Documentation for the Insperity REST API endpoints:
 TODO:
 
 - test Insperity REST API
-  - employee list: add filters: user id
   - get check details (requires employee id)
   - implement additional REST API endpoints
 - use FastMCP to build MCP server
 - add ability to get employee profile to MCP
 - make an example for NEST: get employees hired since last 120 day check,
     termed since last check, get email address and send email to employee
+- 
 - running locally: 
   - Goose?: https://block.github.io/goose/docs/goose-architecture/
   - https://blog.craigers.rocks/mcp-ollama/
@@ -67,3 +67,8 @@ It is also useful to put the legal id for any entities to access:
 
 Len Wanger
 2025
+
+REST Questions:
+  - way to run a report?
+  - way to send a message to an employee? (using a template)
+  - way to add deferred compensation to employee?

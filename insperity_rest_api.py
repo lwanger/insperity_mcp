@@ -21,6 +21,27 @@ Then can use these to call API endpoints:
 TODO:
     more endpoints:
         - check details
+        - https://insperity.myisolved.com/rest/api/clients/{clientId}/payItems -- with payItemFilter and includePayees
+        - https://insperity.myisolved.com/rest/api/clients/{clientId}/deferredCompensation
+        - https://insperity.myisolved.com/rest/api/clients/{clientId}/benefitEnrollment -- activeOnly flag
+        ? https://insperity.myisolved.com/rest/api/clients/{clientId}/legals/{legalId}/employees/{employeeId}/checks
+            w/ yearFilter, includeDetails,
+        - https://insperity.myisolved.com/rest/api/clients/{clientId}/legals/{legalId}/employees/{employeeId}/checks/{id}
+            check details w/ inlcudeLaborDetails
+        - https://insperity.myisolved.com/rest/api/clients/{clientId}/legals/{legalId}/employees/{employeeId}/checks/{id}
+            pay items
+        - https://insperity.myisolved.com/rest/api/clients/{clientId}/legals/{legalId}/payGroups/{payGroupId}/payItems
+            pay items by pay group: w/ payItemFilter
+        - https://insperity.myisolved.com/rest/api/clients/{clientId}/legals/{legalId}/employees/{employeeId}/payroll/accumulations
+            accumulated payrolls: w/ payrollId and effectiveDate filters
+        ? https://insperity.myisolved.com/rest/api/clients/{clientId}/legals/{legalId}/employees/{employeeId}/payroll
+            get employee payrolls
+        - https://insperity.myisolved.com/rest/api/clients/{clientId}/legals/{legalId}/employees/{employeeId}/garnishments
+            employee garnishments
+        - https://insperity.myisolved.com/rest/api/clients/{clientId}/legals/{legalId}/employees/{employeeId}/timecardView
+            timecard view - has timecardHours
+        ? https://insperity.myisolved.com/rest/api/clients/{clientId}/legals/{legalId}/employees/{employeeId}/timecardData
+            get timecard range by employee - startDate endDate
 
 Len Wanger
 2025
@@ -36,11 +57,15 @@ from insperity_rest_utils import *
 
 BASE_URL = "https://insperity.myisolved.com/rest/api"
 GET_TOKEN = f"{BASE_URL}/token"  # POST
-CLIENTS = f"{BASE_URL}/clients"  # "https://insperity.myisolved.com/rest/api/clients"
-LEGALS = f"{BASE_URL}/legals"  # "https://insperity.myisolved.com/rest/api/legals"
-EMPLOYEES_MIN = "https://insperity.myisolved.com/rest/api/clients/{client_id}/legals/{legal_id}/employeesMinimal"
-EMPLOYEES = "https://insperity.myisolved.com/rest/api/clients/{client_id}/employees"
-EMPLOYEES_W_SSN = "https://insperity.myisolved.com/rest/api/clients/{client_id}/employeesWithSSN"
+CLIENTS = f"{BASE_URL}/clients"
+LEGALS = f"{BASE_URL}/legals"
+EMPLOYEES_MIN = "{base_url}/clients/{client_id}/legals/{legal_id}/employeesMinimal"
+EMPLOYEES = "{base_url}/clients/{client_id}/employees"
+EMPLOYEES_W_SSN = "{base_url}/clients/{client_id}/employeesWithSSN"
+EMPLOYEE_TIMECARD_DATA = "{base_url}/clients/{client_id}/legals/{legal_id}/employees/{employee_id}/timecardData"
+
+EMPLOYEE_CHECKS = "{base_url}/clients/{client_id}/legals/{legal_id}/employees/{employee_id}/checks"
+EMPLOYEE_PAYROLL = "{base_url}/clients/{client_id}/legals/{legal_id}/employees/{employee_id}/payroll"
 
 
 ##############################################################################################################
@@ -230,25 +255,25 @@ def get_credentials(client_code: str, legal_name_substring: str|None = None):
     return token_dict, client_id, legal_id
 
 
-def process_employee_list(url: str, headers: dict, params: dict) -> list[dict]:
-    employee_list = []
+def process_multipage_response(url: str, headers: dict, params: dict) -> list[dict]:
+    response_list = []
 
     while True:
         response = requests.get(url, headers=headers, params=params)
 
         if response.status_code != 200:
             raise requests.exceptions.HTTPError(
-                f"Error getting minimal employee information (status={response.status_code}): {response.text}")
+                f"Error getting data from REST api (status={response.status_code}): {response.text}")
 
         response_dict = json.loads(response.content)
-        employee_list += response_dict['results']
+        response_list += response_dict['results']
 
         if response_dict['nextPageUrl'] is None:
             break
 
         url = response_dict['nextPageUrl']
 
-    return employee_list
+    return response_list
 
 
 def get_minimal_employee_list_raw(token_dict: dict, client_id: str, legal_id: str, employee_status_filter: str|None=None) -> list[dict]:
@@ -264,12 +289,12 @@ def get_minimal_employee_list_raw(token_dict: dict, client_id: str, legal_id: st
     headers = get_headers(token_dict['access_token'])
     params = {}
 
-    url = EMPLOYEES_MIN.format(client_id=client_id, legal_id=legal_id)
+    url = EMPLOYEES_MIN.format(base_url=BASE_URL, client_id=client_id, legal_id=legal_id)
 
     if employee_status_filter is not None:
         params['employeeStatusFilter'] = employee_status_filter
 
-    return process_employee_list(url, headers, params)
+    return process_multipage_response(url, headers, params)
 
 
 def get_minimal_employee_list(token_dict: dict, client_id: str, legal_id: str, employee_status_filter: str|None=None) -> list[MinimalEmployee]:
@@ -306,9 +331,9 @@ def get_employee_list_raw(token_dict: dict, client_id: str, legal_id: str, emplo
     params = {}
 
     if with_ssn is True:
-        url = EMPLOYEES_W_SSN.format(client_id=client_id, legal_id=legal_id)
+        url = EMPLOYEES_W_SSN.format(base_url=BASE_URL, client_id=client_id, legal_id=legal_id)
     else:
-        url = EMPLOYEES.format(client_id=client_id, legal_id=legal_id)
+        url = EMPLOYEES.format(base_url=BASE_URL, client_id=client_id, legal_id=legal_id)
 
     if employee_status_filter is not None:
         params['employeeStatusFilter'] = employee_status_filter
@@ -316,7 +341,7 @@ def get_employee_list_raw(token_dict: dict, client_id: str, legal_id: str, emplo
     if search_text is not None:
         params['searchText'] = search_text
 
-    return process_employee_list(url, headers, params)
+    return process_multipage_response(url, headers, params)
 
 
 def get_employee_list(token_dict: dict, client_id: str, legal_id: str, employee_status_filter: str|None=None,
@@ -337,3 +362,70 @@ def get_employee_list(token_dict: dict, client_id: str, legal_id: str, employee_
 
     employee_list = [fill_employee_record(raw_employee) for raw_employee in raw_list]
     return employee_list
+
+####
+# Experimental end points
+####
+
+def get_employee_timecard_data_raw(token_dict: dict, client_id: str, legal_id: str, employee_id: int,
+                          start_date: date | None = None, end_date: date | None = None) -> list[dict]:
+    """
+    NOT WORKING!
+
+    get a raw list of employee records. Each item in the list is the raw dictionary response from the REST API endpoint.
+
+    :param token_dict:
+    :param client_id:
+    :param legal_id:
+    :param employee_id:
+    :param start_date:
+    :param end_date:
+    :return: return a list of dicts of employee information (minimal employee info if minimal=True, full employee info
+        if minimal=False)
+    """
+    headers = get_headers(token_dict['access_token'])
+    params = {}
+
+    url = EMPLOYEE_TIMECARD_DATA.format(base_url=BASE_URL, client_id=client_id, legal_id=legal_id, employee_id=employee_id)
+
+    print(f"{url=}")  # DEBUG
+
+    if start_date is not None:
+        start_date_str = start_date.isoformat()
+        params['startDate'] = start_date_str
+
+    if end_date is not None:
+        end_date_str = end_date.isoformat()
+        params['startDate'] = end_date_str
+
+    return process_multipage_response(url, headers, params)
+
+
+def get_employee_checks_raw(token_dict: dict, client_id: str, legal_id: str, employee_id: int,
+                          year_filter: int | None = None, include_details: bool | None = None) -> list[dict]:
+    """
+    get a raw list of employee checks
+
+    :param token_dict:
+    :param client_id:
+    :param legal_id:
+    :param employee_id:
+    :param year_filter:
+    :param include_details:
+    :return: return a list of dicts of employee information (minimal employee info if minimal=True, full employee info
+        if minimal=False)
+    """
+    headers = get_headers(token_dict['access_token'])
+    params = {}
+
+    url = EMPLOYEE_TIMECARD_DATA.format(base_url=BASE_URL, client_id=client_id, legal_id=legal_id, employee_id=employee_id)
+
+    print(f"{url=}")  # DEBUG
+
+    if year_filter is not None:
+        params['yearFilter'] = year_filter
+
+    if include_details is not None:
+        params['includeDetails'] = include_details
+
+    return process_multipage_response(url, headers, params)
